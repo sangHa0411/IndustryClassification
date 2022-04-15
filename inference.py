@@ -136,7 +136,7 @@ def main():
     hard_submission.digit_1 = hard_submission.digit_2.map(map_fn)
 
     hard_voting_path = os.path.join(inference_args.dir_path, 'hardvoting.csv')
-    hard_submission.to_csv(hard_voting_path index=False)
+    hard_submission.to_csv(hard_voting_path, index=False)
 
 if __name__ == "__main__" :
     main()
