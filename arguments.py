@@ -4,43 +4,31 @@ from transformers import TrainingArguments
 
 @dataclass
 class ModelArguments : 
-    model_name_or_path: str = field(
+    PLM: str = field(
         default="klue/roberta-large",
         metadata={
             "help": "Path to pretrained model or model identifier from huggingface.co/models"
         },
     )
-    
-@dataclass
-class DataTrainingArguments:
-    data_path: str = field(
-        default="./input",
-        metadata={
-            "help": "Data path"
-        },
-    )
     save_path: str = field(
-        default="./checkpoints/roberta-large",
+        default="./checkpoints",
         metadata={
             "help": "Path to save checkpoint from fine tune model"
         },
     )
+    
+@dataclass
+class DataTrainingArguments:
     max_length: int = field(
         default=128,
         metadata={
             "help": "Max length of input sequence"
         },
     )
-    output_name: str = field(
-        default="Base.csv",
+    preprocessing_num_workers: int = field(
+        default=4,
         metadata={
-            "help": "Path to save output.csv from fine tune model"
-        },
-    )
-    use_spaced : bool = field(
-        default=False,
-        metadata={
-            "help" : "using spaced file"
+            "help": "The number of preprocessing workers"
         }
     )
     
@@ -61,12 +49,6 @@ class MyTrainingArguments(TrainingArguments):
             "help" : "using noam scheduler"
         }
     )
-    use_cosine: bool = field(
-        default=False,
-        metadata={
-            "help" : "using cosine scheduler"
-        }
-    )
     use_rdrop: bool = field(
         default=False,
         metadata={
@@ -82,9 +64,6 @@ class MyTrainingArguments(TrainingArguments):
 
 @dataclass
 class LoggingArguments:
-    """
-    Arguments pertaining to what data we are going to input our model for training and eval.
-    """
     dotenv_path: Optional[str] = field(
         default='./wandb.env',
         metadata={"help":'input your dotenv path'},
@@ -96,14 +75,11 @@ class LoggingArguments:
 
 @dataclass
 class InferenceArguments:
-    """
-    Arguments pertaining to what data we are going to input our model for training and eval.
-    """
-    k_fold: bool = field(
-        default=False,
-        metadata={"help":'k fold inference'},
-    )
-    k : Optional[int] = field(
-        default=5,
+    fold_size : Optional[int] = field(
+        default=10,
         metadata={"help" : "The number of folds"}
+    )
+    dir_path : Optional[str] = field(
+        default='./results',
+        metadata={"help" : "The csv file for test dataset"}
     )
