@@ -9,6 +9,15 @@
   3. 훈련 데이터 갯수 : 1000000개
   4. 테스트 데이터 갯수 : 100000개  
       
+## Environment
+  1. Platform : GCP - Debian Linux OS (Virtual Machine)
+  2. GPU : Nvidia Tesla A100 GPU 1개
+  3. CPU : Intel cascade lake 1개
+
+## Dependency 
+  1. datasets : 1.18.0
+  2. transformers : 4.17.0
+
 ## Baseline
   1. Huggingface의 transformers 라이브러리르 기반을 basline 코드 작성
   2. RobertaModelForSequenceClassification을 상속받아서 다양하 모델을 만들고 성능 비교하기
@@ -94,7 +103,6 @@
 ## Wandb Log
   * Results
     ![스크린샷 2022-04-16 오후 4 54 29](https://user-images.githubusercontent.com/48673702/163667031-ed0f9897-77e2-4941-b590-36241afd0856.png)
-
 
 ## Final Hyperparameter 
   1. 10-fold training
