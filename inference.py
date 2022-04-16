@@ -53,10 +53,6 @@ def main():
     # -- Collator
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer, max_length=data_args.max_length)
     
-
-    # -- Config 
-    config = AutoConfig.from_pretrained(model_name_or_path)
-
     # -- Model Class
     model_lib = importlib.import_module('model')
     if training_args.model_type == 'average' :
@@ -75,8 +71,11 @@ def main():
     pred_ids = []
     pred_probs = []
     for i in tqdm(range(training_args.fold_size)) :
-        model_name_or_path = os.path.join(model_args.model_name_or_path, f'fold{i}')
-        model = model_class.from_pretrained(model_name_or_path, config=config)
+        PLM = os.path.join(model_args.PLM, f'fold{i}')
+
+        # -- Config & Model
+        config = AutoConfig.from_pretrained(PLM)
+        model = model_class.from_pretrained(PLM, config=config)
 
         trainer = Trainer(                       # the instantiated 🤗 Transformers model to be trained
             model=model,                         # trained model
@@ -106,7 +105,7 @@ def main():
     print('Soft Voting')
     soft_prediction = np.sum(pred_probs, axis=0)
     soft_submission = pd.read_csv('./data/test.csv', index_col=False)
-    soft_submission.digit_3 = soft_prediction.argmax(axis=1)
+    soft_submission.digit_3 = list(soft_prediction.argmax(axis=1))
     soft_submission.digit_3 = soft_submission.digit_3.map(index_to_label).astype(str)
     soft_submission.digit_2 = soft_submission.digit_3.map(lambda x : x[:-1])
     soft_submission.digit_1 = soft_submission.digit_2.map(map_fn)

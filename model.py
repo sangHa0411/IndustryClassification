@@ -204,8 +204,8 @@ class RobertaRBERT(RobertaPreTrainedModel):
         batch_size, seq_size = input_ids.shape
         hidden_states = outputs[0]
 
-        cls_flag = input_ids == 0
-        sep_flag = input_ids == 2
+        cls_flag = input_ids == 0 # tokenizer cls token
+        sep_flag = input_ids == 2 # tokenizer sep toen
 
         sep_token_states = hidden_states[cls_flag + sep_flag]
         sep_token_states = sep_token_states.view(batch_size, -1, self.config.hidden_size)
@@ -240,8 +240,14 @@ class RobertaLSTM(RobertaPreTrainedModel):
         self.config = config
 
         self.roberta = RobertaModel(config, add_pooling_layer=False)
-        self.lstm= nn.LSTM(input_size= config.hidden_size, hidden_size= config.hidden_size, num_layers= 2, dropout=0.2,
-                            batch_first= True, bidirectional= True)
+        self.lstm= nn.LSTM(input_size=config.hidden_size, 
+            hidden_size=config.hidden_size, 
+            num_layers=2, 
+            dropout=0.2,
+            batch_first=True, 
+            bidirectional=True
+        )
+
         classifier_dropout = (
             config.classifier_dropout if config.classifier_dropout is not None else config.hidden_dropout_prob
         )
@@ -281,26 +287,8 @@ class RobertaLSTM(RobertaPreTrainedModel):
         
         loss = None
         if labels is not None:
-            if self.config.problem_type is None:
-                if self.num_labels == 1:
-                    self.config.problem_type = "regression"
-                elif self.num_labels > 1 and (labels.dtype == torch.long or labels.dtype == torch.int):
-                    self.config.problem_type = "single_label_classification"
-                else:
-                    self.config.problem_type = "multi_label_classification"
-
-            if self.config.problem_type == "regression":
-                loss_fct = nn.MSELoss()
-                if self.num_labels == 1:
-                    loss = loss_fct(logits.squeeze(), labels.squeeze())
-                else:
-                    loss = loss_fct(logits, labels)
-            elif self.config.problem_type == "single_label_classification":
-                loss_fct = nn.CrossEntropyLoss()
-                loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
-            elif self.config.problem_type == "multi_label_classification":
-                loss_fct = nn.BCEWithLogitsLoss()
-                loss = loss_fct(logits, labels)
+            loss_fct = nn.CrossEntropyLoss()
+            loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
 
         if not return_dict:
             output = (logits,) + outputs[2:]

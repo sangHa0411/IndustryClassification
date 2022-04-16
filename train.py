@@ -112,12 +112,18 @@ def main():
             WANDB_AUTH_KEY = os.getenv("WANDB_AUTH_KEY")
             wandb.login(key=WANDB_AUTH_KEY)
 
-            group_name = training_args.fold_size + '-fold-training'
+            group_name = training_args.model_type + '-' + str(training_args.fold_size) + '-fold-training'
+            name = f"EP:{training_args.num_train_epochs}\
+                _LR:{training_args.learning_rate}\
+                _BS:{training_args.per_device_train_batch_size}\
+                _WR:{training_args.warmup_ratio}\
+                _WD:{training_args.weight_decay}"
+        
             wandb.init(
                 entity="sangha0411",
                 project=logging_args.project_name,
                 group=group_name,
-                name=training_args.run_name + f"_fold{i+1}"
+                name=name
             )
             wandb.config.update(training_args)
 
@@ -139,7 +145,7 @@ def main():
 
             # -- Training
             trainer.train()
-            save_path = os.path.join(data_args.save_path, f'fold{i}')
+            save_path = os.path.join(model_args.save_path, f'fold{i}')
             
             if training_args.do_eval:
                 trainer.evaluate()
