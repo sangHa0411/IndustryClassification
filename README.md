@@ -19,8 +19,8 @@
   2. transformers : 4.17.0
 
 ## Baseline
-  1. Huggingface의 transformers 라이브러리르 기반을 basline 코드 작성
-  2. RobertaModelForSequenceClassification을 상속받아서 다양하 모델을 만들고 성능 비교하기
+  1. Huggingface의 transformers 라이브러리르 기반으로 basline 코드 작성
+  2. RobertaModelForSequenceClassification을 상속받아서 다양한 모델을 만들고 성능 비교하기
   4. K-fold Validation & Ensemable을 통한 성능 향상
 
 ## Data Preprocessing
@@ -48,7 +48,7 @@
   6. RBERT
       * Source : https://arxiv.org/pdf/1905.08284.pdf
       * Structure 
-        * 논문과의 차이점 : **경계 토큰 사이에 있느 토큰들을 가져오 것이 아니라 경계 토큰([CLS], [SEP])의 정보를 가져와서 전달**
+        * 논문과의 차이점 : **경계 토큰 사이에 있는 토큰들을 가져오는 것이 아니라 경계 토큰([CLS], [SEP])의 정보를 가져와서 전달**
         * Image
           ![136745007-699b42eb-5338-43a5-815c-3c681a63e8e4](https://user-images.githubusercontent.com/48673702/163665931-0315f49a-c009-4e8a-a72e-fe430f83581d.png)
 
