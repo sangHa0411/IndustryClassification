@@ -12,13 +12,12 @@ class Preprocessor :
         sep_token = self.tokenizer.sep_token
 
         for i in range(len(dataset['AI_id'])) :
-            obj = '' if dataset['text_obj'][i] == 'nan' else dataset['text_obj'][i]
-            mthd = '' if dataset['text_mthd'][i] == 'nan' else dataset['text_mthd'][i]
-            deal = '' if dataset['text_deal'][i] == 'nan' else dataset['text_deal'][i]
+            obj = dataset['text_obj'][i]
+            mthd = dataset['text_mthd'][i]
+            deal = dataset['text_deal'][i]
             
             if self.train_flag == True :
-                label_str = str(dataset['digit_3'][i])
-                label_index = self.label_dict[label_str]
+                label_index = self.label_dict[dataset['digit_3'][i]]
                 labels.append(label_index)
 
             input_sen = obj + sep_token + mthd + sep_token + deal

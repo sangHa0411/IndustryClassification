@@ -37,6 +37,10 @@ class MyTrainingArguments(TrainingArguments):
     report_to: Optional[str] = field(
         default='wandb',
     )
+    fold_size : Optional[int] = field(
+        default=5,
+        metadata={"help" : "The number of folds"}
+    )
     use_lstm: bool = field(
         default=False,
         metadata={
@@ -75,10 +79,6 @@ class LoggingArguments:
 
 @dataclass
 class InferenceArguments:
-    fold_size : Optional[int] = field(
-        default=10,
-        metadata={"help" : "The number of folds"}
-    )
     dir_path : Optional[str] = field(
         default='./results',
         metadata={"help" : "The csv file for test dataset"}

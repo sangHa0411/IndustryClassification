@@ -74,8 +74,7 @@ def main():
 
     pred_ids = []
     pred_probs = []
-    for i in tqdm(range(inference_args.fold_size)) :
-
+    for i in tqdm(range(training_args.fold_size)) :
         model_name_or_path = os.path.join(model_args.model_name_or_path, f'fold{i}')
         model = model_class.from_pretrained(model_name_or_path, config=config)
 
@@ -84,10 +83,9 @@ def main():
             args=training_args,                  # training arguments, defined above
             data_collator=data_collator,         # collator
         )
-        
-        # inference
-        outputs = trainer.predict(dset)
 
+        # -- Inference
+        outputs = trainer.predict(dset)
         pred_probs.append(outputs[0])
         pred_ids.append(outputs[0].argmax(axis=1))
 

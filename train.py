@@ -5,7 +5,6 @@ import random
 import pickle
 import importlib
 import numpy as np
-import transformers
 from dotenv import load_dotenv
 from datasets import load_metric, load_dataset
 from utils.encoder import Encoder
@@ -62,7 +61,7 @@ def main():
     print(dset)
 
     # -- Preprocessing datasets
-    tokenizer = AutoTokenizer.from_pretrained(model_args.model_name_or_path)
+    tokenizer = AutoTokenizer.from_pretrained(model_args.PLM)
 
     with open('data/labels/label_to_index.pickle', 'rb') as f:
         label_dict = pickle.load(f)
@@ -76,7 +75,7 @@ def main():
     dset = dset.map(encoder, batched=True, num_proc=4, remove_columns=dset.column_names)
     print(dset)
 
-    config = AutoConfig.from_pretrained(model_args.model_name_or_path)
+    config = AutoConfig.from_pretrained(model_args.PLM)
     config.num_labels = 225
     
     # -- Model Class
@@ -101,10 +100,10 @@ def main():
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer, max_length=data_args.max_length)
 
     if training_args.do_train:
-        skf = StratifiedKFold(n_splits=10, shuffle=True)
+        skf = StratifiedKFold(n_splits=training_args.fold_size, shuffle=True)
 
         for i, (train_idx, valid_idx) in enumerate(skf.split(dset, dset['labels'])):
-            model = model_class.from_pretrained(model_args.model_name_or_path, config=config)
+            model = model_class.from_pretrained(model_args.PLM, config=config)
             train_dataset = dset.select(train_idx.tolist())
             valid_dataset = dset.select(valid_idx.tolist())
                         
@@ -113,11 +112,12 @@ def main():
             WANDB_AUTH_KEY = os.getenv("WANDB_AUTH_KEY")
             wandb.login(key=WANDB_AUTH_KEY)
 
+            group_name = training_args.fold_size + '-fold-training'
             wandb.init(
-                entity="metamong",
+                entity="sangha0411",
                 project=logging_args.project_name,
-                group='10-fold-training',
-                name=training_args.run_name + f"_fold{i}"
+                group=group_name,
+                name=training_args.run_name + f"_fold{i+1}"
             )
             wandb.config.update(training_args)
 

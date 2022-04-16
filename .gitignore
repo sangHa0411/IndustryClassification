@@ -1,1 +1,6 @@
 data/*.csv
+IndustryClassification
+.DS_store
+__pycache__
+wandb.env
+*.sh
